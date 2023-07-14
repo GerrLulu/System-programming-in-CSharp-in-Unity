@@ -7,6 +7,7 @@ namespace LessonTwo.TaskOne
     {
         public NativeArray<int> Array;
 
+
         public void Execute()
         {
             for(int i = 0; i < Array.Length; i++)

@@ -4,18 +4,22 @@ using UnityEngine;
 
 namespace LessonTwo.TaskOne
 {
-    public class ForBehaviour : MonoBehaviour
+    public class ForMonoBehaviour : MonoBehaviour
     {
         [SerializeField] private int _sizeArray;
+        [SerializeField] private int _min;
+        [SerializeField] private int _max;
+
         private NativeArray<int> _array;
         private JobHandle _jobHandle;
 
-        void Start()
+
+        private void Start()
         {
             _array = new NativeArray<int>(_sizeArray, Allocator.TempJob);
             for(int i = 0;  i < _sizeArray; i++)
             {
-                _array[i] = Random.Range(0, 100);
+                _array[i] = Random.Range(_min, _max);
                 Debug.Log($"Befor [{i}] = {_array[i]}");
             }
 
