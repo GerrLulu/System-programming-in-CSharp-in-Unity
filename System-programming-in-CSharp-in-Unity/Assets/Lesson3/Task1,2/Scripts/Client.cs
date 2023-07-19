@@ -7,20 +7,27 @@ namespace LessonThree
     public class Client : MonoBehaviour
     {
         public delegate void OnMessageReceive(object message);
-        public event OnMessageReceive onMessageReceive;
+        public event OnMessageReceive MessageReceive;
 
         private const int MAX_CONNECTION = 10;
 
-        private int port = 0;
-        private int serverPort = 5805;
+        private int _port = 0;
+        private int _serverPort = 5805;
 
-        private int hostID;
+        private int _hostID;
 
-        private int reliableChannel;
-        private int connectionID;
+        private int _reliableChannel;
+        private int _connectionID;
+        private string _name;
 
-        private bool isConnected = false;
-        private byte error;
+        private bool _isConnected = false;
+        private byte _error;
+
+        public string Name
+        {
+            //get { return _name; }
+            set { _name = value; }
+        }
 
 
         public void Connect()
@@ -28,39 +35,44 @@ namespace LessonThree
             NetworkTransport.Init();
             ConnectionConfig cc = new ConnectionConfig();
 
-            reliableChannel = cc.AddChannel(QosType.Reliable);
+            _reliableChannel = cc.AddChannel(QosType.Reliable);
 
             HostTopology topology = new HostTopology(cc, MAX_CONNECTION);
 
-            hostID = NetworkTransport.AddHost(topology, port);
-            connectionID = NetworkTransport.Connect(hostID, "127.0.0.1", serverPort, 0, out error);
+            _hostID = NetworkTransport.AddHost(topology, _port);
+            _connectionID = NetworkTransport.Connect(_hostID, "127.0.0.1", _serverPort, 0, out _error);
 
-            if ((NetworkError)error == NetworkError.Ok)
-                isConnected = true;
+            if ((NetworkError)_error == NetworkError.Ok)
+                _isConnected = true;
             else
-                Debug.Log((NetworkError)error);
+                Debug.Log((NetworkError)_error);
         }
 
         public void Disconnect()
         {
-            if (!isConnected)
+            if (!_isConnected)
                 return;
 
-            NetworkTransport.Disconnect(hostID, connectionID, out error);
-            isConnected = false;
+            SendMessage($"{_name} has disconnected");
+            Debug.Log($"{_name} has disconnected");
+
+            NetworkTransport.Disconnect(_hostID, _connectionID, out _error);
+            _isConnected = false;
         }
 
-        void Update()
+        private void Update()
         {
-            if (!isConnected)
+            if (!_isConnected)
                 return;
+
             int recHostId;
             int connectionId;
             int channelId;
             byte[] recBuffer = new byte[1024];
             int bufferSize = 1024;
             int dataSize;
-            NetworkEventType recData = NetworkTransport.Receive(out recHostId, out connectionId, out channelId, recBuffer, bufferSize, out dataSize, out error);
+            NetworkEventType recData = NetworkTransport.Receive(out recHostId, out connectionId, out channelId, recBuffer,
+                bufferSize, out dataSize, out _error);
 
             while (recData != NetworkEventType.Nothing)
             {
@@ -69,32 +81,35 @@ namespace LessonThree
                     case NetworkEventType.Nothing:
                         break;
                     case NetworkEventType.ConnectEvent:
-                        onMessageReceive?.Invoke($"You have been connected to server.");
+                        SendMessage(_name);
+                        MessageReceive?.Invoke($"You have been connected to server.");
                         Debug.Log($"You have been connected to server.");
                         break;
                     case NetworkEventType.DataEvent:
                         string message = Encoding.Unicode.GetString(recBuffer, 0, dataSize);
-                        onMessageReceive?.Invoke(message);
+                        MessageReceive?.Invoke(message);
                         Debug.Log(message);
                         break;
                     case NetworkEventType.DisconnectEvent:
-                        isConnected = false;
-                        onMessageReceive?.Invoke($"You have been disconnected from server.");
+                        _isConnected = false;
+                        MessageReceive?.Invoke($"You have been disconnected from server.");
                         Debug.Log($"You have been disconnected from server.");
                         break;
                     case NetworkEventType.BroadcastEvent:
                         break;
                 }
-                recData = NetworkTransport.Receive(out recHostId, out connectionId, out channelId, recBuffer, bufferSize, out dataSize, out error);
+                recData = NetworkTransport.Receive(out recHostId, out connectionId, out channelId, recBuffer, bufferSize,
+                    out dataSize, out _error);
             }
         }
 
         public void SendMessage(string message)
         {
             byte[] buffer = Encoding.Unicode.GetBytes(message);
-            NetworkTransport.Send(hostID, connectionID, reliableChannel, buffer, message.Length *
-            sizeof(char), out error);
-            if ((NetworkError)error != NetworkError.Ok) Debug.Log((NetworkError)error);
+            NetworkTransport.Send(_hostID, _connectionID, _reliableChannel, buffer, message.Length * sizeof(char),
+                out _error);
+            if ((NetworkError)_error != NetworkError.Ok)
+                Debug.Log((NetworkError)_error);
         }
     }
 }
