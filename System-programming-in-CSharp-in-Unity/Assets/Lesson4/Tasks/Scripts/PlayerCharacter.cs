@@ -6,13 +6,13 @@ namespace LessonFour
     {
         [Range(0, 100)][SerializeField] private int health = 100;
 
-        [Range(0.5f, 10.0f)][SerializeField] private float movingSpeed = 8.0f;
-        [SerializeField] private float acceleration = 3.0f;
+        [Range(0.5f, 10.0f)][SerializeField] private float _movingSpeed = 8.0f;
+        [SerializeField] private float _acceleration = 3.0f;
         private const float gravity = -9.8f;
-        private CharacterController characterController;
-        private MouseLook mouseLook;
+        private CharacterController _characterController;
+        private MouseLook _mouseLook;
 
-        private Vector3 currentVelocity;
+        private Vector3 _currentVelocity;
         protected override FireAction _fireAction { get; set; }
 
 
@@ -23,44 +23,45 @@ namespace LessonFour
             _fireAction = gameObject.AddComponent<RayShooter>();
             _fireAction.Reloading();
 
-            characterController = GetComponentInChildren<CharacterController>();
-            characterController ??= gameObject.AddComponent<CharacterController>();
+            _characterController = GetComponentInChildren<CharacterController>();
+            _characterController ??= gameObject.AddComponent<CharacterController>();
 
-            mouseLook = GetComponentInChildren<MouseLook>();
-            mouseLook ??= gameObject.AddComponent<MouseLook>();
+            _mouseLook = GetComponentInChildren<MouseLook>();
+            _mouseLook ??= gameObject.AddComponent<MouseLook>();
         }
 
         public override void Movement()
         {
-            if (mouseLook != null && mouseLook.PlayerCamera != null)
+            if (_mouseLook != null && _mouseLook.PlayerCamera != null)
             {
-                mouseLook.PlayerCamera.enabled = hasAuthority;
+                _mouseLook.PlayerCamera.enabled = hasAuthority;
             }
 
             if (hasAuthority)
             {
-                float moveX = Input.GetAxis("Horizontal") * movingSpeed;
-                float moveZ = Input.GetAxis("Vertical") * movingSpeed;
+                float moveX = Input.GetAxis("Horizontal") * _movingSpeed;
+                float moveZ = Input.GetAxis("Vertical") * _movingSpeed;
 
                 var movement = new Vector3(moveX, 0, moveZ);
-                movement = Vector3.ClampMagnitude(movement, movingSpeed);
+                movement = Vector3.ClampMagnitude(movement, _movingSpeed);
                 movement *= Time.deltaTime;
 
                 if (Input.GetKey(KeyCode.LeftShift))
                 {
-                    movement *= acceleration;
+                    movement *= _acceleration;
                 }
 
                 movement.y = gravity;
                 movement = transform.TransformDirection(movement);
-                characterController.Move(movement);
-                mouseLook.Rotation();
-                CmdUpdatePosition(transform.position);
+                _characterController.Move(movement);
+                _mouseLook.Rotation();
+                CmdUpdatePosition(transform.position, transform.rotation);
             }
             else
             {
-                transform.position = Vector3.SmoothDamp(transform.position, _serverPosition, ref currentVelocity,
-                    movingSpeed * Time.deltaTime);
+                transform.position = Vector3.SmoothDamp(transform.position, _serverPosition, ref _currentVelocity,
+                    _movingSpeed * Time.deltaTime);
+                transform.rotation = _serverRotation;
             }
         }
 

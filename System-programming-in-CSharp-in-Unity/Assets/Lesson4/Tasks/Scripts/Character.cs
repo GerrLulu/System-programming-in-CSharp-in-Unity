@@ -8,6 +8,7 @@ namespace LessonFour
     public abstract class Character : NetworkBehaviour
     {
         [SyncVar] protected Vector3 _serverPosition;
+        [SyncVar] protected Quaternion _serverRotation;
 
         protected Action _onUpdateAction { get; set; }
         protected abstract FireAction _fireAction { get; set; }
@@ -29,9 +30,10 @@ namespace LessonFour
         }
 
         [Command]
-        protected void CmdUpdatePosition(Vector3 position)
+        protected void CmdUpdatePosition(Vector3 position, Quaternion rotation)
         {
             _serverPosition = position;
+            _serverRotation = rotation;
         }
         
         public abstract void Movement();

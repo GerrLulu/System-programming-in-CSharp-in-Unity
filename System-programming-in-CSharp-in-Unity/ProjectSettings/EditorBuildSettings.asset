@@ -6,9 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Lesson4/Task1/Scene/Lesson4Task1Network.unity
+    path: Assets/Lesson4/Tasks/Scene/Lesson4Network.unity
     guid: 92a426a562709d04aa2d1602780a713e
   - enabled: 1
-    path: Assets/Lesson4/Task1/Scene/Lesson4Task1.unity
+    path: Assets/Lesson4/Tasks/Scene/Lesson4.unity
     guid: 200d08bfa7bf54f4e9dc3969bd94de72
   m_configObjects: {}

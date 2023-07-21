@@ -149,8 +149,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
-  movingSpeed: 8
-  acceleration: 3
+  _movingSpeed: 8
+  _acceleration: 3
 --- !u!114 &3753502477648996930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -183,7 +183,7 @@ MonoBehaviour:
     i14: 0
     i15: 0
   m_ServerOnly: 0
-  m_LocalPlayerAuthority: 1
+  m_LocalPlayerAuthority: 0
 --- !u!1 &5377462264745565199
 GameObject:
   m_ObjectHideFlags: 0
