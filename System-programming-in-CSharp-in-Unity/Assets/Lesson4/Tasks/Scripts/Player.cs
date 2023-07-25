@@ -23,8 +23,7 @@ namespace LessonFour
             }
 
             _playerCharacter = Instantiate(_playerPrefab);
-            NetworkServer.SpawnWithClientAuthority(_playerCharacter,
-            connectionToClient);
+            NetworkServer.SpawnWithClientAuthority(_playerCharacter, connectionToClient);
         }
     }
 }

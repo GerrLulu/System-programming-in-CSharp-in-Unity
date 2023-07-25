@@ -32,6 +32,7 @@ namespace LessonFour
                 {
                     bullet = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                     bullet.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    bullet.tag = "Bullet";
                 }
                 else
                 {
@@ -100,13 +101,13 @@ namespace LessonFour
             while (_reloading)
             {
                 _bulletCount = " | ";
-                yield return new WaitForSeconds(0.01f);
+                yield return new WaitForSeconds(0.1f);
                 _bulletCount = @" \ ";
-                yield return new WaitForSeconds(0.01f);
+                yield return new WaitForSeconds(0.1f);
                 _bulletCount = "---";
-                yield return new WaitForSeconds(0.01f);
+                yield return new WaitForSeconds(0.1f);
                 _bulletCount = " / ";
-                yield return new WaitForSeconds(0.01f);
+                yield return new WaitForSeconds(0.1f);
             }
             _bulletCount = _bullets.Count.ToString();
             yield return null;

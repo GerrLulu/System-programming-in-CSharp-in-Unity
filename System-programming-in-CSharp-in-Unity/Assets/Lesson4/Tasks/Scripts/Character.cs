@@ -9,6 +9,7 @@ namespace LessonFour
     {
         [SyncVar] protected Vector3 _serverPosition;
         [SyncVar] protected Quaternion _serverRotation;
+        [SyncVar] protected int _serverHealth;
 
         protected Action _onUpdateAction { get; set; }
         protected abstract FireAction _fireAction { get; set; }
@@ -37,5 +38,16 @@ namespace LessonFour
         }
         
         public abstract void Movement();
+
+        [Command]
+        protected void CmdUpdateHealth(int health)
+        {
+            _serverHealth = health;
+        }
+
+        private void OnDestroy()
+        {
+            _onUpdateAction -= Movement;
+        }
     }
 }

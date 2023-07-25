@@ -57,7 +57,7 @@ namespace LessonFour
             var point = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, 0);
             Ray ray = _camera.ScreenPointToRay(point);
 
-            if (!Physics.Raycast(ray, out var hit))
+            if (!Physics.Raycast(ray, out RaycastHit hit))
             {
                 yield break;
             }

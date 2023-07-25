@@ -1,18 +1,19 @@
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace LessonFour
 {
     public class PlayerCharacter : Character
     {
-        [Range(0, 100)][SerializeField] private int health = 100;
+        [Range(0, 100)][SerializeField] private int _health = 100;
 
         [Range(0.5f, 10.0f)][SerializeField] private float _movingSpeed = 8.0f;
         [SerializeField] private float _acceleration = 3.0f;
         private const float gravity = -9.8f;
         private CharacterController _characterController;
         private MouseLook _mouseLook;
-
         private Vector3 _currentVelocity;
+
         protected override FireAction _fireAction { get; set; }
 
 
@@ -20,7 +21,7 @@ namespace LessonFour
         {
             base.Initiate();
 
-            _fireAction = gameObject.AddComponent<RayShooter>();
+            _fireAction ??= gameObject.AddComponent<RayShooter>();
             _fireAction.Reloading();
 
             _characterController = GetComponentInChildren<CharacterController>();
@@ -61,6 +62,7 @@ namespace LessonFour
             {
                 transform.position = Vector3.SmoothDamp(transform.position, _serverPosition, ref _currentVelocity,
                     _movingSpeed * Time.deltaTime);
+                //transform.position = _serverPosition;
                 transform.rotation = _serverRotation;
             }
         }
@@ -70,6 +72,7 @@ namespace LessonFour
             Initiate();
         }
 
+        [ClientRpc]
         private void OnGUI()
         {
             if (Camera.main == null)
@@ -77,9 +80,9 @@ namespace LessonFour
                 return;
             }
 
-            var info = $"Health: {health}\nClip: {_fireAction.BulletCount}";
-            var size = 12;
-            var bulletCountSize = 50;
+            var info = $"Health: {_health}\nClip: {_fireAction.BulletCount}";
+            var size = 50;
+            var bulletCountSize = 100;
 
             int posX = Camera.main.pixelWidth / 2 - size / 4;
             int posY = Camera.main.pixelHeight / 2 - size / 2;
@@ -89,6 +92,37 @@ namespace LessonFour
 
             GUI.Label(new Rect(posX, posY, size, size), "+");
             GUI.Label(new Rect(posXBul, posYBul, bulletCountSize * 2, bulletCountSize * 2), info);
+        }
+
+        [Command]
+        private void OnTriggerEnter(Collider collider)
+        {
+            if (collider.tag == "Bullet")
+            {
+                ChangeHealth();
+            }
+        }
+
+        private void ChangeHealth()
+        {
+            _health -= 50;
+
+            if (hasAuthority)
+            {
+                if (_health <= 0)
+                {
+                    var client = FindObjectOfType<NetworkManager>();
+                    client.StopClient();
+                }
+                else
+                {
+                    CmdUpdateHealth(_health);
+                }
+            }
+            else
+            {
+                _health = _serverHealth;
+            }
         }
     }
 }
