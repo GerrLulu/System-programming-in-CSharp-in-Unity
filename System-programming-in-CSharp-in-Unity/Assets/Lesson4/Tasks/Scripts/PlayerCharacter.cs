@@ -72,7 +72,7 @@ namespace LessonFour
             Initiate();
         }
 
-        [ClientRpc]
+        [Client]
         private void OnGUI()
         {
             if (Camera.main == null)
@@ -94,7 +94,7 @@ namespace LessonFour
             GUI.Label(new Rect(posXBul, posYBul, bulletCountSize * 2, bulletCountSize * 2), info);
         }
 
-        [Command]
+        [ServerCallback]
         private void OnTriggerEnter(Collider collider)
         {
             if (collider.tag == "Bullet")
