@@ -26,6 +26,5 @@ namespace Main
                 return _staticInstance;
             }
         }
-
     }
 }

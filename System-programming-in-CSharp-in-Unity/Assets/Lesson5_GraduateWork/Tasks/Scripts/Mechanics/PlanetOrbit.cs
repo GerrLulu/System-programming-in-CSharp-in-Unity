@@ -1,6 +1,4 @@
 using Network;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Mechanics
@@ -57,32 +55,22 @@ namespace Mechanics
             SendToServer();
         }
 
-        protected override void FromServerUpdate()
-        {
-            throw new System.NotImplementedException();
-        }
-
         protected override void SendToServer()
         {
-            throw new System.NotImplementedException();
+            _serverPosition = transform.position;
+            _serverEuler = transform.eulerAngles;
         }
 
-        //protected override void SendToServer()
-        //{
-        //    serverPosition = transform.position;
-        //    serverEuler = transform.eulerAngles;
-        //}
+        protected override void FromServerUpdate()
+        {
+            if (!isClient)
+            {
+                return;
+            }
 
-        //protected override void FromServerUpdate()
-        //{
-        //    if (!isClient)
-        //    {
-        //        return;
-        //    }
-
-        //    transform.position = Vector3.SmoothDamp(transform.position, serverPosition, ref _currentPositionSmoothVelocity,
-        //        speed);
-        //    transform.rotation = Quaternion.Euler(serverEuler);
-        //}
+            transform.position = Vector3.SmoothDamp(transform.position, _serverPosition, ref _currentPositionSmoothVelocity,
+                _speed);
+            transform.rotation = Quaternion.Euler(_serverEuler);
+        }
     }
 }
