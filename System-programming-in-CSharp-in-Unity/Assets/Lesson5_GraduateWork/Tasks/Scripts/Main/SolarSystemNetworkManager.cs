@@ -59,7 +59,8 @@ namespace Main
         public void ReceiveName(NetworkMessage networkMessage)
         {
             _players[networkMessage.conn.connectionId].PlayerName = networkMessage.reader.ReadString();
-            _players[networkMessage.conn.connectionId].gameObject.name = _players[networkMessage.conn.connectionId].PlayerName;
+            _players[networkMessage.conn.connectionId].gameObject.name = _players[networkMessage.conn.connectionId].
+                PlayerName;
             Debug.Log(_players[networkMessage.conn.connectionId]);
         }
     }

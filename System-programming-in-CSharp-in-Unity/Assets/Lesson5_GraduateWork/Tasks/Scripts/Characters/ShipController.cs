@@ -86,6 +86,30 @@ namespace Characters
         private void LateUpdate()
         {
             _cameraOrbit?.CameraMovement();
+            gameObject.name = _playerName;
+        }
+
+        [ServerCallback]
+        public void OnTriggerEnter(Collider collider)
+        {
+            if(hasAuthority)
+            {
+                Debug.LogAssertion("Столкновение вашего короБЛЯ");
+                NetworkManager.singleton.StopClient();
+
+                Destroy(gameObject);
+            }
+            else
+            {
+                Debug.LogAssertion("Столкновение вражеского короБЛЯ");
+                Destroy(gameObject);
+            }
+
+            gameObject.SetActive(false);
+            Transform spawnTransform = NetworkManager.singleton.GetStartPosition();
+            gameObject.transform.position = spawnTransform.position;
+            gameObject.transform.rotation = spawnTransform.rotation;
+            gameObject.SetActive(true);
         }
     }
 }
