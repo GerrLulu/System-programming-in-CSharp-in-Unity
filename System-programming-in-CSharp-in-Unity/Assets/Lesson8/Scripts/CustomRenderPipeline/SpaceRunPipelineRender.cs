@@ -10,6 +10,8 @@ namespace Lesson8.CustomRenderPipeline
 
         protected override void Render(ScriptableRenderContext context, Camera[] cameras)
         {
+            _cameraRenderer = new CameraRenderer();
+
             CamerasRender(context, cameras);
         }
 
