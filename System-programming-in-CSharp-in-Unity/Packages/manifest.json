@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.unity.burst": "1.6.6",
     "com.unity.collab-proxy": "2.0.7",
     "com.unity.multiplayer-hlapi": "1.1.1",
     "com.unity.render-pipelines.universal": "10.10.1",
